@@ -1,0 +1,22 @@
+# Python execution cache markers
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Local reporting server outputs
+allure-results/
+allure-report/
+
+# Framework log folders and dynamic captures
+logs/
+*.log
+screenshots/
+sample_file.txt
+
+# Local virtual environment installations
+.venv/
+venv/
+env/
+.env
