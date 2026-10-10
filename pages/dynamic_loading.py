@@ -2,35 +2,38 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-class Dynamicloading:
+class DynamicLoadingPage:
     """A page object class to handle interactions with the Herokuapp Dynamic Loading (Example 1) page."""
     
-    START = (By.CSS_SELECTOR, "#start button")
-    FINSH_TXT = (By.CSS_SELECTOR, "#finish h4")
+    START_BUTTON = (By.CSS_SELECTOR, "#start button")
+    FINISH_TEXT = (By.CSS_SELECTOR, "#finish h4")
 
-    def __init__(self, driver):
-        """Initializes the Dynamicloading page object with a WebDriver instance.
+    def __init__(self, driver, default_timeout=10):
+        """Initializes the page object with a WebDriver instance and a default explicit wait.
 
         Args:
-            driver: The Selenium WebDriver instance used to interact with the browser.
+            driver: The Selenium WebDriver instance.
+            default_timeout (int or float): Default max seconds to wait for elements.
         """
         self.driver = driver
+        self.wait = WebDriverWait(self.driver, default_timeout)
         
     def open(self):
         """Navigates the browser directly to the Herokuapp Dynamic Loading Example 1 page URL."""
         self.driver.get("https://the-internet.herokuapp.com/dynamic_loading/1")
 
-    def loading(self, time_pass):
-        """Triggers the dynamic loading process by clicking the start button, 
-        waits for the hidden element to become visible, and captures its text.
+    def click_start(self):
+        """Triggers the dynamic loading process by clicking the start button."""
+        self.wait.until(EC.visibility_of_element_located(self.START_BUTTON)).click()
+
+    def get_finish_text(self, timeout=None):
+        """Waits for the hidden element to become visible and captures its text.
 
         Args:
-            time_pass (int or float): The maximum number of seconds to wait for elements 
-                to become visible before throwing a TimeoutException.
+            timeout (int or float, optional): Override the default timeout for this specific check.
 
         Returns:
-            str: The text content of the dynamically loaded finish element (e.g., "Hello World!").
+            str: The text content of the dynamically loaded finish element.
         """
-        self.wait = WebDriverWait(self.driver, time_pass)
-        self.wait.until(EC.visibility_of_element_located(self.START)).click()
-        return self.wait.until(EC.visibility_of_element_located(self.FINSH_TXT)).text
+        waiter = WebDriverWait(self.driver, timeout) if timeout else self.wait
+        return waiter.until(EC.visibility_of_element_located(self.FINISH_TEXT)).text
